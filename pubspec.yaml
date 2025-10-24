@@ -23,6 +23,7 @@ dependencies:
   permission_handler: ^11.3.1
 
   # ✨ AGREGAR ESTAS:
+  
   vector_math: ^2.1.4        # Para transformaciones 3D
   audioplayers: ^5.2.1       # Para feedback sonoro (opcional)
 

@@ -5,7 +5,8 @@ import 'package:geolocator/geolocator.dart' as gl;
 import 'package:http/http.dart' as http;
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart' as mp;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
+// ✅ DEBE DECIR:
+import 'ar_navigation_3d.dart';
 /// 🚗 Navegación estilo Google Maps (modo Auto / A pie)
 class MapNavigationPage extends StatefulWidget {
   final double destLat;
