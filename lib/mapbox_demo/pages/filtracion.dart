@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../data/lugares_ueb.dart'; // ✅ Import del archivo de datos central
+import 'lugares_ueb.dart';// ✅ Import del archivo de datos central
 
 class FiltracionPage extends StatefulWidget {
   const FiltracionPage({super.key});
