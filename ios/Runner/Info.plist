@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>CFBundleDevelopmentRegion</key>
+		<string>$(DEVELOPMENT_LANGUAGE)</string>
+		<key>CFBundleDisplayName</key>
+		<string>Ubicatec Unificado</string>
+		<key>CFBundleExecutable</key>
+		<string>$(EXECUTABLE_NAME)</string>
+		<key>CFBundleIdentifier</key>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+		<key>CFBundleInfoDictionaryVersion</key>
+		<string>6.0</string>
+		<key>CFBundleName</key>
+		<string>ubicatec_unificado</string>
+		<key>CFBundlePackageType</key>
+		<string>APPL</string>
+		<key>CFBundleShortVersionString</key>
+		<string>$(FLUTTER_BUILD_NAME)</string>
+		<key>CFBundleSignature</key>
+		<string>????</string>
+		<key>CFBundleVersion</key>
+		<string>$(FLUTTER_BUILD_NUMBER)</string>
+		<key>LSRequiresIPhoneOS</key>
+		<true/>
+		<key>UILaunchStoryboardName</key>
+		<string>LaunchScreen</string>
+
+		<!-- 🧭 Orientaciones soportadas -->
+		<key>UISupportedInterfaceOrientations</key>
+		<array>
+			<string>UIInterfaceOrientationPortrait</string>
+			<string>UIInterfaceOrientationLandscapeLeft</string>
+			<string>UIInterfaceOrientationLandscapeRight</string>
+		</array>
+		<key>UISupportedInterfaceOrientations~ipad</key>
+		<array>
+			<string>UIInterfaceOrientationPortrait</string>
+			<string>UIInterfaceOrientationPortraitUpsideDown</string>
+			<string>UIInterfaceOrientationLandscapeLeft</string>
+			<string>UIInterfaceOrientationLandscapeRight</string>
+		</array>
+
+		<!-- ⚙️ Optimizaciones -->
+		<key>CADisableMinimumFrameDurationOnPhone</key>
+		<true/>
+		<key>UIApplicationSupportsIndirectInputEvents</key>
+		<true/>
+
+		<!-- 🔐 Permisos requeridos -->
+		<key>NSCameraUsageDescription</key>
+		<string>Necesitamos acceso a la cámara para mostrar las guías visuales en realidad aumentada.</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>Se necesita acceso al micrófono para ciertas funciones de la cámara.</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>Necesitamos acceder a tu ubicación mientras usas la app para mostrar tu posición en el mapa.</string>
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<string>Usamos tu ubicación para mejorar la precisión del posicionamiento indoor.</string>
+		<key>NSMotionUsageDescription</key>
+		<string>Se usa el acelerómetro y giroscopio para orientar las guías de navegación.</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Necesitamos acceder a la galería para permitir selección o carga de imágenes.</string>
+		<key>NSLocationAlwaysUsageDescription</key>
+		<string>Se requiere acceso a tu ubicación en todo momento para mostrar rutas en tiempo real.</string>
+
+		<!-- 🆕 Permisos añadidos -->
+		<key>NSBluetoothAlwaysUsageDescription</key>
+		<string>Se usa Bluetooth para mejorar la precisión del posicionamiento y detección de beacons.</string>
+		<key>NSBluetoothPeripheralUsageDescription</key>
+		<string>Se necesita para conectar con dispositivos de posicionamiento cercanos.</string>
+		<key>NSUserTrackingUsageDescription</key>
+		<string>Se utiliza tu ubicación y movimiento para navegación paso a paso precisa.</string>
+
+		<!-- 🆕 Variable de entorno para Mapbox -->
+		<key>MBXAccessToken</key>
+		<string>$(MAPBOX_ACCESS_TOKEN)</string>
+
+		<!-- 🆕 Permitir conexiones HTTPS seguras -->
+		<key>NSAppTransportSecurity</key>
+		<dict>
+			<key>NSAllowsArbitraryLoads</key>
+			<true/>
+		</dict>
+
+		<!-- 🧩 ARKit -->
+		<key>UIRequiredDeviceCapabilities</key>
+		<array>
+			<string>arm64</string>
+		</array>
+
+		<!-- 🧭 Compatibilidad Metal -->
+		<key>Metal</key>
+		<true/>
+	</dict>
+</plist>
