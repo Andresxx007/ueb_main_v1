@@ -99,7 +99,13 @@ class _ArNavigation3DState extends State<ArNavigation3D>
     _initializeComponents();
   }
 
-  // =====================================================
+  //   _isCalibrated = true;
+  _calibrationService.forceCalibrated();
+  
+  _initializeCamera();
+  _initializeSensors();
+  _startNavigation();
+  =====================================================
   // 🚀 INICIALIZACIÓN
   // =====================================================
   Future<void> _initializeComponents() async {
@@ -452,21 +458,8 @@ class _ArNavigation3DState extends State<ArNavigation3D>
 
           const Spacer(),
 
-          // Botón recalibrar
-          if (_compassAccuracy < _minCompassAccuracy)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 100),
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                ),
-                onPressed: () => setState(() => _showCalibrationDialog = true),
-                icon: const Icon(Icons.warning_amber),
-                label: const Text('CALIBRAR BRÚJULA'),
-              ),
-            ),
+          
+        
         ],
       ),
     );
