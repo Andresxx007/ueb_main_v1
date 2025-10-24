@@ -15,9 +15,9 @@ import 'package:sensors_plus/sensors_plus.dart';
 
 import '../../services/ar_sensor_manager.dart';
 import '../../services/ar_route_calculator.dart';
-import '../../services/ar_calibration_service.dart';
+
 import '../../widgets/ar_arrow_painter.dart';
-import '../../widgets/ar_calibration_dialog.dart';
+
 import '../../widgets/ar_hud_overlay.dart';
 
 class ArNavigation3D extends StatefulWidget {
@@ -50,7 +50,7 @@ class _ArNavigation3DState extends State<ArNavigation3D>
   // 🧭 SENSORES Y ORIENTACIÓN
   // =====================================================
   final ArSensorManager _sensorManager = ArSensorManager();
-  late ArCalibrationService _calibrationService;
+
 
   double _compassHeading = 0; // 0-360° (Norte = 0°)
   double _pitch = 0; // Inclinación adelante/atrás (-90 a 90°)
@@ -104,7 +104,7 @@ class _ArNavigation3DState extends State<ArNavigation3D>
   // =====================================================
   Future<void> _initializeComponents() async {
     await _initCamera();
-    _initCalibrationService();
+
     _initAnimations();
     _initSensors();
     _initLocationTracking();
@@ -186,8 +186,7 @@ class _ArNavigation3DState extends State<ArNavigation3D>
           _roll = roll;
         });
 
-        // Verificar si necesita calibración
-        _calibrationService.checkOrientation(pitch, roll);
+
       }
     });
 
@@ -195,7 +194,7 @@ class _ArNavigation3DState extends State<ArNavigation3D>
     FlutterCompass.events?.listen((event) {
       if (event.accuracy != null) {
         setState(() => _compassAccuracy = event.accuracy!.toDouble());
-        _calibrationService.updateAccuracy(event.accuracy!.toDouble());
+
       }
     });
   }
@@ -356,11 +355,6 @@ class _ArNavigation3DState extends State<ArNavigation3D>
           // 🔘 Botones de control
           _buildControlButtons(),
 
-          // ⚠️ Diálogo de calibración
-          if (_showCalibrationDialog)
-            ArCalibrationDialog(
-              onDismiss: () => setState(() => _showCalibrationDialog = false),
-            ),
 
           // ✅ Mensaje de llegada
           if (_hasReachedDestination) _buildArrivalOverlay(),
