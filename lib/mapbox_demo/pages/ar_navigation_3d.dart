@@ -15,16 +15,14 @@ import 'package:sensors_plus/sensors_plus.dart';
 
 import '../../services/ar_sensor_manager.dart';
 import '../../services/ar_route_calculator.dart';
-
 import '../../widgets/ar_arrow_painter.dart';
-
 import '../../widgets/ar_hud_overlay.dart';
 
 class ArNavigation3D extends StatefulWidget {
   final double targetLat;
   final double targetLon;
   final String targetName;
-  final List<Map<String, dynamic>> routeWaypoints; // Lista de puntos GPS de la ruta
+  final List<Map<String, dynamic>> routeWaypoints;
 
   const ArNavigation3D({
     super.key,
@@ -51,11 +49,10 @@ class _ArNavigation3DState extends State<ArNavigation3D>
   // =====================================================
   final ArSensorManager _sensorManager = ArSensorManager();
 
-
-  double _compassHeading = 0; // 0-360° (Norte = 0°)
-  double _pitch = 0; // Inclinación adelante/atrás (-90 a 90°)
-  double _roll = 0; // Inclinación lateral (-180 a 180°)
-  double _compassAccuracy = 100; // Precisión de brújula (0-100)
+  double _compassHeading = 0;
+  double _pitch = 0;
+  double _roll = 0;
+  double _compassAccuracy = 100;
 
   // =====================================================
   // 📍 UBICACIÓN Y NAVEGACIÓN
@@ -66,7 +63,7 @@ class _ArNavigation3DState extends State<ArNavigation3D>
   double _currentLat = 0;
   double _currentLon = 0;
   double _currentAltitude = 0;
-  double _userSpeed = 0; // m/s
+  double _userSpeed = 0;
 
   int _currentWaypointIndex = 0;
   double _distanceToNextWaypoint = 0;
@@ -82,16 +79,15 @@ class _ArNavigation3DState extends State<ArNavigation3D>
   late AnimationController _arrowRotationController;
   late Animation<double> _arrowRotationAnimation;
 
-  bool _showCalibrationDialog = false;
   bool _isNavigationActive = true;
   bool _hasReachedDestination = false;
 
   // =====================================================
   // ⚙️ CONFIGURACIÓN
   // =====================================================
-  static const double _waypointProximityThreshold = 8.0; // metros
-  static const double _destinationThreshold = 5.0; // metros
-  static const double _minCompassAccuracy = 20.0; // grados
+  static const double _waypointProximityThreshold = 8.0;
+  static const double _destinationThreshold = 5.0;
+  static const double _minCompassAccuracy = 20.0;
 
   @override
   void initState() {
@@ -99,18 +95,11 @@ class _ArNavigation3DState extends State<ArNavigation3D>
     _initializeComponents();
   }
 
-  //   _isCalibrated = true;
-  _calibrationService.forceCalibrated();
-  
-  _initializeCamera();
-  _initializeSensors();
-  _startNavigation();
-  =====================================================
+  // =====================================================
   // 🚀 INICIALIZACIÓN
   // =====================================================
   Future<void> _initializeComponents() async {
     await _initCamera();
-
     _initAnimations();
     _initSensors();
     _initLocationTracking();
@@ -139,9 +128,7 @@ class _ArNavigation3DState extends State<ArNavigation3D>
     }
   }
 
-
   void _initAnimations() {
-    // Animación de pulso (respiración de la flecha)
     _arrowPulseController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
@@ -155,7 +142,6 @@ class _ArNavigation3DState extends State<ArNavigation3D>
       curve: Curves.easeInOut,
     ));
 
-    // Animación de rotación suave
     _arrowRotationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
@@ -171,7 +157,6 @@ class _ArNavigation3DState extends State<ArNavigation3D>
   }
 
   void _initSensors() {
-    // 🧭 Brújula (orientación del dispositivo)
     _sensorManager.compassStream.listen((heading) {
       if (mounted && heading != null) {
         setState(() {
@@ -181,26 +166,20 @@ class _ArNavigation3DState extends State<ArNavigation3D>
       }
     });
 
-    // 📐 Acelerómetro (inclinación del dispositivo)
     _sensorManager.accelerometerStream.listen((event) {
       if (mounted) {
         final pitch = _calculatePitch(event.x, event.y, event.z);
         final roll = _calculateRoll(event.x, event.y, event.z);
-
         setState(() {
           _pitch = pitch;
           _roll = roll;
         });
-
-
       }
     });
 
-    // 🎯 Precisión de brújula
     FlutterCompass.events?.listen((event) {
       if (event.accuracy != null) {
         setState(() => _compassAccuracy = event.accuracy!.toDouble());
-
       }
     });
   }
@@ -208,7 +187,7 @@ class _ArNavigation3DState extends State<ArNavigation3D>
   void _initLocationTracking() {
     const settings = LocationSettings(
       accuracy: LocationAccuracy.bestForNavigation,
-      distanceFilter: 2, // Actualizar cada 2 metros
+      distanceFilter: 2,
     );
 
     _positionStream = Geolocator.getPositionStream(locationSettings: settings)
@@ -220,7 +199,6 @@ class _ArNavigation3DState extends State<ArNavigation3D>
           _currentAltitude = position.altitude;
           _userSpeed = position.speed;
         });
-
         _updateNavigation();
       }
     });
@@ -256,7 +234,6 @@ class _ArNavigation3DState extends State<ArNavigation3D>
 
     final currentWaypoint = widget.routeWaypoints[_currentWaypointIndex];
 
-    // Calcular distancia al siguiente waypoint
     _distanceToNextWaypoint = Geolocator.distanceBetween(
       _currentLat,
       _currentLon,
@@ -264,7 +241,6 @@ class _ArNavigation3DState extends State<ArNavigation3D>
       currentWaypoint['lon']!,
     );
 
-    // Calcular bearing (dirección) hacia el waypoint
     _bearingToWaypoint = _routeCalculator.calculateBearing(
       _currentLat,
       _currentLon,
@@ -272,17 +248,15 @@ class _ArNavigation3DState extends State<ArNavigation3D>
       currentWaypoint['lon']!,
     );
 
-    // Calcular distancia total restante
     _totalDistanceRemaining = _routeCalculator.calculateRemainingDistance(
       _currentLat,
       _currentLon,
       _currentWaypointIndex,
     );
 
-    // Avanzar al siguiente waypoint si estamos cerca
     if (_distanceToNextWaypoint < _waypointProximityThreshold) {
       setState(() => _currentWaypointIndex++);
-      _playWaypointSound(); // Feedback sonoro
+      _playWaypointSound();
     }
 
     _updateArrowRotation();
@@ -308,10 +282,8 @@ class _ArNavigation3DState extends State<ArNavigation3D>
   void _updateArrowRotation() {
     if (_bearingToWaypoint == 0) return;
 
-    // Calcular rotación relativa (diferencia entre bearing y orientación del dispositivo)
     final targetRotation = _normalizeAngle(_bearingToWaypoint - _compassHeading);
 
-    // Animar transición suave
     _arrowRotationAnimation = Tween<double>(
       begin: _arrowRotationAnimation.value,
       end: targetRotation,
@@ -340,13 +312,8 @@ class _ArNavigation3DState extends State<ArNavigation3D>
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // 📸 Cámara de fondo (vista AR)
           _buildCameraView(),
-
-          // 🎯 Flecha 3D roja direccional
           if (_isNavigationActive) _buildArrowOverlay(),
-
-          // 📊 HUD con información de navegación
           ArHudOverlay(
             distanceToNext: _distanceToNextWaypoint,
             totalDistance: _totalDistanceRemaining,
@@ -355,14 +322,9 @@ class _ArNavigation3DState extends State<ArNavigation3D>
             targetName: widget.targetName,
             speed: _userSpeed,
             compassAccuracy: _compassAccuracy,
-            isCalibrated: true,
+            isCalibrated: true, // ✅ Siempre true
           ),
-
-          // 🔘 Botones de control
           _buildControlButtons(),
-
-
-          // ✅ Mensaje de llegada
           if (_hasReachedDestination) _buildArrivalOverlay(),
         ],
       ),
@@ -391,12 +353,9 @@ class _ArNavigation3DState extends State<ArNavigation3D>
       builder: (context, child) {
         return CustomPaint(
           painter: ArArrowPainter(
-            // Datos de orientación
             compassHeading: _compassHeading,
             pitch: _pitch,
             roll: _roll,
-
-            // Datos de navegación
             currentLat: _currentLat,
             currentLon: _currentLon,
             targetLat: _currentWaypointIndex < widget.routeWaypoints.length
@@ -405,19 +364,13 @@ class _ArNavigation3DState extends State<ArNavigation3D>
             targetLon: _currentWaypointIndex < widget.routeWaypoints.length
                 ? widget.routeWaypoints[_currentWaypointIndex]['lon']!
                 : widget.targetLon,
-
-            // Estado de navegación
             distanceToTarget: _distanceToNextWaypoint,
             bearingToTarget: _bearingToWaypoint,
             relativeAngle: _arrowRotationAnimation.value,
-
-            // Animaciones
             pulseScale: _arrowPulseAnimation.value,
             rotationAngle: _arrowRotationAnimation.value,
-
-            // Configuración visual
             arrowColor: Colors.red,
-            isCalibrated: _compassAccuracy > _minCompassAccuracy,
+            isCalibrated: true, // ✅ Siempre calibrado
           ),
           size: Size.infinite,
         );
@@ -427,40 +380,19 @@ class _ArNavigation3DState extends State<ArNavigation3D>
 
   Widget _buildControlButtons() {
     return SafeArea(
-      child: Column(
-        children: [
-          // Botón cerrar
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                FloatingActionButton(
-                  mini: true,
-                  backgroundColor: Colors.black.withOpacity(0.7),
-                  onPressed: () => _showExitDialog(),
-                  child: const Icon(Icons.close, color: Colors.white),
-                ),
-                FloatingActionButton(
-                  mini: true,
-                  backgroundColor: Colors.black.withOpacity(0.7),
-                  onPressed: () => setState(() => _showCalibrationDialog = true),
-                  child: Icon(
-                    Icons.explore,
-                    color: _compassAccuracy > _minCompassAccuracy
-                        ? Colors.green
-                        : Colors.orange,
-                  ),
-                ),
-              ],
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            FloatingActionButton(
+              mini: true,
+              backgroundColor: Colors.black.withOpacity(0.7),
+              onPressed: () => _showExitDialog(),
+              child: const Icon(Icons.close, color: Colors.white),
             ),
-          ),
-
-          const Spacer(),
-
-          
-        
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -510,8 +442,7 @@ class _ArNavigation3DState extends State<ArNavigation3D>
               onPressed: () => Navigator.pop(context),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
               ),
               child: const Text('FINALIZAR'),
             ),
@@ -537,8 +468,8 @@ class _ArNavigation3DState extends State<ArNavigation3D>
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context); // Cerrar diálogo
-              Navigator.pop(context); // Cerrar AR
+              Navigator.pop(context);
+              Navigator.pop(context);
             },
             child: const Text('SALIR', style: TextStyle(color: Colors.red)),
           ),
@@ -548,12 +479,10 @@ class _ArNavigation3DState extends State<ArNavigation3D>
   }
 
   void _showDestinationReachedDialog() {
-    // Vibración de feedback (si está disponible)
-    // HapticFeedback.heavyImpact();
+    debugPrint('🎯 Destino alcanzado');
   }
 
   void _playWaypointSound() {
-    // Implementar audio feedback con audioplayers
     debugPrint('🎵 Waypoint alcanzado');
   }
 
