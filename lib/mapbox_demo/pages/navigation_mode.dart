@@ -62,7 +62,7 @@ class _MapNavigationPageState extends State<MapNavigationPage> {
             onMapCreated: _onMapCreated,
             styleUri: mp.MapboxStyles.MAPBOX_STREETS,
           ),
-
+          _buildArButton(),
           // 🧭 Indicaciones paso a paso
           if (_instrucciones.isNotEmpty)
             Positioned(
@@ -350,5 +350,60 @@ class _MapNavigationPageState extends State<MapNavigationPage> {
       return Future.error('🚫 Permiso denegado permanentemente');
     }
   }
+  // =====================================================
+// 🎯 BOTÓN PARA ACTIVAR AR
+// =====================================================
+Widget _buildArButton() {
+  return Positioned(
+    bottom: 180,
+    right: 20,
+    child: FloatingActionButton.extended(
+      heroTag: "ar_mode",
+      backgroundColor: Colors.purple,
+      onPressed: _activateArMode,
+      icon: const Icon(Icons.view_in_ar, color: Colors.white),
+      label: const Text(
+        'MODO AR',
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ),
+  );
+}
+
+Future<void> _activateArMode() async {
+  if (_route == null || _currentPos == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('⚠️ Esperando ruta y ubicación'),
+        backgroundColor: Colors.orange,
+      ),
+    );
+    return;
+  }
+
+  // Extraer waypoints de la ruta de Mapbox
+  final waypoints = _route!.geometry.coordinates
+      .map((point) => {
+            'lat': point.lat.toDouble(),
+            'lon': point.lng.toDouble(),
+          })
+      .toList();
+
+  // Navegar a la pantalla AR
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => ArNavigation3D(
+        targetLat: widget.destLat,
+        targetLon: widget.destLon,
+        targetName: widget.destName,
+        routeWaypoints: waypoints,
+      ),
+    ),
+  );
+}
 }
 //comentario de mierda solo para ver si sube git o no 
