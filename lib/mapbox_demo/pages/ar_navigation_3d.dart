@@ -55,7 +55,7 @@ class _ArNavigation3DState extends State<ArNavigation3D>
   double _compassHeading = 0; // 0-360° (Norte = 0°)
   double _pitch = 0; // Inclinación adelante/atrás (-90 a 90°)
   double _roll = 0; // Inclinación lateral (-180 a 180°)
-  double _compassAccuracy = 0; // Precisión de brújula (0-100)
+  double _compassAccuracy = 100; // Precisión de brújula (0-100)
 
   // =====================================================
   // 📍 UBICACIÓN Y NAVEGACIÓN
@@ -133,15 +133,6 @@ class _ArNavigation3DState extends State<ArNavigation3D>
     }
   }
 
-  void _initCalibrationService() {
-    _calibrationService = ArCalibrationService(
-      onCalibrationNeeded: () {
-        if (mounted && !_showCalibrationDialog) {
-          setState(() => _showCalibrationDialog = true);
-        }
-      },
-    );
-  }
 
   void _initAnimations() {
     // Animación de pulso (respiración de la flecha)
@@ -359,7 +350,7 @@ class _ArNavigation3DState extends State<ArNavigation3D>
             targetName: widget.targetName,
             speed: _userSpeed,
             compassAccuracy: _compassAccuracy,
-            isCalibrated: _compassAccuracy > _minCompassAccuracy,
+            isCalibrated: true,
           ),
 
           // 🔘 Botones de control
